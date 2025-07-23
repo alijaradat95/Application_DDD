@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Application.Domain.Shared.Base
 {
-    public abstract class BaseEntity<TPrimaryKey> : IEntity<TPrimaryKey>
+    public interface IEntity<T>
     {
-        public virtual TPrimaryKey Id { get; set; }
+        T Id { get; set; }
     }
-
 }
+

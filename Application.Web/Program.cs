@@ -68,9 +68,9 @@ public class Program
         using (var scope = app.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            await context.Database.MigrateAsync();
-            await PermissionSeeder.SeedAsync(context);
-            await Seeder.SeedAdminUserAndRolesAsync(context);
+            //await context.Database.MigrateAsync();
+            //await PermissionSeeder.SeedAsync(context);
+            //await Seeder.SeedAdminUserAndRolesAsync(context);
         }
 
         app.UseRequestLocalization(new RequestLocalizationOptions

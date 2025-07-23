@@ -2,6 +2,7 @@
 using Application.Domain.Shared.Base;
 using Application.Domain.Shared.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Linq.Expressions;
 
 namespace Application.EntityFrameworkCore
@@ -15,6 +16,7 @@ namespace Application.EntityFrameworkCore
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Tenant> Tenants { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
 
 
         public ApplicationDbContext(
@@ -88,12 +90,14 @@ namespace Application.EntityFrameworkCore
         public override int SaveChanges()
         {
             ApplyAuditInfo();
+            TrackAudits();
             return base.SaveChanges();
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             ApplyAuditInfo();
+            TrackAudits();
             return await base.SaveChangesAsync(cancellationToken);
         }
 
@@ -132,5 +136,38 @@ namespace Application.EntityFrameworkCore
                 }
             }
         }
+
+        private void TrackAudits()
+        {
+            var entries = ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted);
+
+            foreach (var entry in entries)
+            {
+                var audit = new AuditLog
+                {
+                    ActionDate = DateTime.UtcNow,
+                    Action = entry.State.ToString(),
+                    EntityName = entry.Entity.GetType().Name,
+                    EntityId = (entry.Entity as IEntity<Guid>)?.Id,
+                    UserId = _currentUser.UserId
+                };
+
+                if (entry.State == EntityState.Modified)
+                {
+                    var changes = new Dictionary<string, object>();
+                    foreach (var prop in entry.Properties)
+                    {
+                        if (prop.IsModified)
+                            changes[prop.Metadata.Name] = prop.CurrentValue;
+                    }
+
+                    audit.Changes = JsonConvert.SerializeObject(changes);
+                }
+
+                AuditLogs.Add(audit);
+            }
+        }
+
     }
 }
