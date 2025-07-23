@@ -1,6 +1,7 @@
 ﻿using Application.Contracts.Dtos.Tenant;
 using Application.Contracts.Interfaces;
 using Application.Domain.Entities;
+using Application.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

@@ -4,6 +4,7 @@ using Application.Application.Services.Common;
 using Application.Contracts.Interfaces.Auth;
 using Application.Domain.Entities;
 using Application.Domain.Shared.Interfaces;
+using Application.EntityFrameworkCore;
 using Application.EntityFrameworkCore.Seed;
 using Application.HttpApi.Extensions;
 using Application.HttpApi.Host;
@@ -53,7 +54,7 @@ public class Program
 
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-        //builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+        builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 
         var app = builder.Build();
@@ -67,16 +68,16 @@ public class Program
         using (var scope = app.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            //await context.Database.MigrateAsync();
-            //await PermissionSeeder.SeedAsync(context);
+            await context.Database.MigrateAsync();
+            await PermissionSeeder.SeedAsync(context);
         }
 
-        //app.UseRequestLocalization(new RequestLocalizationOptions
-        //{
-        //    DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en"),
-        //    SupportedCultures = new[] { new CultureInfo("en"), new CultureInfo("ar") },
-        //    SupportedUICultures = new[] { new CultureInfo("en"), new CultureInfo("ar") }
-        //});
+        app.UseRequestLocalization(new RequestLocalizationOptions
+        {
+            DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en"),
+            SupportedCultures = new[] { new CultureInfo("en"), new CultureInfo("ar") },
+            SupportedUICultures = new[] { new CultureInfo("en"), new CultureInfo("ar") }
+        });
 
         app.UseHttpsRedirection();
         app.UseGlobalExceptionHandling();

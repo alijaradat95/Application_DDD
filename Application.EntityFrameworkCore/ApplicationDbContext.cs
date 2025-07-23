@@ -1,9 +1,10 @@
-﻿using Application.Domain.Shared.Base;
+﻿using Application.Domain.Entities;
+using Application.Domain.Shared.Base;
 using Application.Domain.Shared.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace Application.Domain.Entities
+namespace Application.EntityFrameworkCore
 {
     public class ApplicationDbContext : DbContext
     {
