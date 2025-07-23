@@ -13,6 +13,8 @@ namespace Application.Domain.Entities
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Tenant> Tenants { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
+
 
         public ApplicationDbContext(
             DbContextOptions<ApplicationDbContext> options,
@@ -37,6 +39,11 @@ namespace Application.Domain.Entities
                 .HasOne(ur => ur.Role)
                 .WithMany(r => r.Users)
                 .HasForeignKey(ur => ur.RoleId);
+
+            builder.Entity<RolePermission>()
+            .HasOne(rp => rp.Role)
+            .WithMany(r => r.Permissions)
+            .HasForeignKey(rp => rp.RoleId);
 
             builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
@@ -70,15 +77,12 @@ namespace Application.Domain.Entities
             var parameter = Expression.Parameter(entityType, "e");
             var property = Expression.Property(parameter, "TenantId");
 
-            var tenantIdProperty = typeof(ICurrentUserService).GetProperty(nameof(ICurrentUserService.TenantId));
-            var currentUserExpression = Expression.Constant(_currentUser);
-            var tenantIdAccess = Expression.Property(currentUserExpression, tenantIdProperty!);
+            var tenantIdValue = Expression.Constant(_currentUser.TenantId, typeof(Guid?));
+            var condition = Expression.Equal(property, tenantIdValue); 
 
-            var convertedTenantId = Expression.Convert(tenantIdAccess, typeof(Guid));
-
-            var condition = Expression.Equal(property, convertedTenantId);
             return Expression.Lambda(condition, parameter);
         }
+
 
         public override int SaveChanges()
         {

@@ -11,7 +11,7 @@ namespace Application.Domain.Entities
     {
         public string Name { get; set; }
         public bool IsDefault { get; set; } = false;
-
+        public ICollection<RolePermission> Permissions { get; set; } = new List<RolePermission>();
         public ICollection<UserRole> Users { get; set; } = new List<UserRole>();
     }
 
