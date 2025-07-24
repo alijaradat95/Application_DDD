@@ -11,8 +11,14 @@ namespace Application.Contracts.Interfaces.Auth
 {
     public interface IUserAppService
     {
-       
+        Task ChangePasswordAsync(ChangePasswordDto input);
+        Task DeleteAsync(Guid id);
+        Task<List<UserDto>> GetAllAsync();
+        Task<UserDto> GetByIdAsync(Guid id);
+        Task<List<string>> GetUserRolesAsync(Guid userId);
         Task<AuthResponseDto> LoginAsync(LoginDto input);
         Task<Response<Guid>> RegisterAsync(RegisterDto input);
+        Task SetActivationAsync(Guid userId, bool isActive);
+        Task UpdateAsync(UpdateUserDto input);
     }
 }

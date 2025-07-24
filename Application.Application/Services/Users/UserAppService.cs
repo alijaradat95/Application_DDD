@@ -1,5 +1,6 @@
 ﻿using Application.Application.Services.Auth;
 using Application.Contracts.Dtos.Auth;
+using Application.Contracts.Dtos.Tenant;
 using Application.Contracts.Dtos.User;
 using Application.Contracts.Interfaces.Auth;
 using Application.Domain.Entities;
@@ -24,6 +25,96 @@ namespace Application.Application.Services.Users
             _context = context;
             _configuration = configuration;
         }
+
+        public async Task<List<UserDto>> GetAllAsync()
+        {
+            return await _context.Users
+                .Where(t => !t.IsDeleted)
+                .Select(t => new UserDto
+                {
+                    Id = t.Id,
+                    Email = t.Email,
+                    UserName = t.UserName,
+                    TenantId = t.TenantId
+                })
+                .ToListAsync();
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null || user.IsDeleted)
+                throw new Exception("User not found");
+
+            user.IsDeleted = true;
+            user.DeletedOn = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SetActivationAsync(Guid userId, bool isActive)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && !u.IsDeleted);
+            if (user == null)
+                throw new Exception("User not found");
+
+            user.IsActive = isActive;
+            user.LastModifiedOn = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<string>> GetUserRolesAsync(Guid userId)
+        {
+            return await _context.UserRoles
+                .Where(x => x.UserId == userId)
+                .Select(x => x.Role.Name)
+                .ToListAsync();
+        }
+
+
+        public async Task ChangePasswordAsync(ChangePasswordDto input)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == input.UserId && !u.IsDeleted);
+            if (user == null)
+                throw new Exception("User not found");
+
+            var oldHash = PasswordHasher.HashPassword(input.OldPassword);
+            if (user.PasswordHash != oldHash)
+                throw new Exception("Old password is incorrect");
+
+            user.PasswordHash = PasswordHasher.HashPassword(input.NewPassword);
+            await _context.SaveChangesAsync();
+        }
+
+
+        public async Task UpdateAsync(UpdateUserDto input)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == input.Id && !u.IsDeleted);
+            if (user == null)
+                throw new Exception("User not found");
+
+            user.UserName = input.UserName;
+            user.Email = input.Email;
+            user.LastModifiedOn = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+        }
+
+
+        public async Task<UserDto> GetByIdAsync(Guid id)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
+            if (user == null)
+                throw new Exception("User not found");
+
+            return new UserDto
+            {
+                Id = user.Id,
+                Email = user.Email,
+                UserName = user.UserName,
+                TenantId = user.TenantId
+            };
+        }
+
 
         public async Task<Response<Guid>> RegisterAsync(RegisterDto input)
         {

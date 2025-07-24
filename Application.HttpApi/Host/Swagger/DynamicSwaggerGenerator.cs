@@ -11,46 +11,51 @@ public class DynamicSwaggerGenerator : IDocumentFilter
     {
         foreach (var (route, method, iface) in AppServiceMetadata.Discover())
         {
-            var param = method.GetParameters().FirstOrDefault();
-            if (param == null)
-                continue;
+            var parameters = method.GetParameters();
 
-            OpenApiSchema schema;
-            try
-            {
-                schema = context.SchemaGenerator.GenerateSchema(param.ParameterType, context.SchemaRepository);
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                continue;
-            }
+            OpenApiRequestBody requestBody = null;
 
-            var operation = new OpenApiOperation
+            if (parameters.Length == 1)
             {
-                Summary = method.Name,
-                Tags = new List<OpenApiTag> { new() { Name = iface.Name } },
-                RequestBody = new OpenApiRequestBody
+                try
                 {
-                    Content =
+                    var param = parameters[0];
+                    var schema = context.SchemaGenerator.GenerateSchema(param.ParameterType, context.SchemaRepository);
+
+                    requestBody = new OpenApiRequestBody
+                    {
+                        Content =
                     {
                         ["application/json"] = new OpenApiMediaType
                         {
                             Schema = schema
                         }
                     }
-                },
+                    };
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    continue;
+                }
+            }
+
+            var operation = new OpenApiOperation
+            {
+                Summary = method.Name,
+                Tags = new List<OpenApiTag> { new() { Name = iface.Name } },
+                RequestBody = requestBody,
                 Responses = new OpenApiResponses
                 {
                     ["200"] = new OpenApiResponse
                     {
                         Description = "Success",
                         Content = {
-                            ["application/json"] = new OpenApiMediaType
-                            {
-                                Schema = new OpenApiSchema { Type = "object" }
-                            }
+                        ["application/json"] = new OpenApiMediaType
+                        {
+                            Schema = new OpenApiSchema { Type = "object" }
                         }
+                    }
                     }
                 }
             };

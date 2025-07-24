@@ -88,6 +88,9 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
+        app.MapRazorPages().WithStaticAssets();
+        app.UseSwagger();
+        app.UseSwaggerUI();
         app.UseEndpoints(endpoints =>
         {
             foreach (var (route, method, iface) in AppServiceMetadata.Discover())
@@ -111,10 +114,6 @@ public class Program
                 });
             }
         });
-
-        app.MapRazorPages().WithStaticAssets();
-        app.UseSwagger();
-        app.UseSwaggerUI();
         app.Run();
     }
 }
