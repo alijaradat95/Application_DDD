@@ -5,7 +5,8 @@
 <html lang="ar" dir="rtl">
 
 @{
-        Layout = null;
+                    Layout = null;
+                    var isAuthenticated = User.Identity.IsAuthenticated;
 }
 
 <head>
@@ -59,24 +60,42 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
+
             <div class="col-md-2 sidebar">
                 <h5 class="text-white mb-4">Application</h5>
+                @* @if (!isAuthenticated)
+                { *@
+                <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Account/Login" ? "active" : "")" asp-page="/Account/Login">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    Login
+                </a>
+                @*  }
+                else
+                { *@
                 <a asp-page="/Dashboard/Index" class="@(Context.Request.Path.Value.Contains("Dashboard") ? "active" : "")">
-                    <i class="bi bi-house-door me-1"></i> الرئيسية
+                    <i class="bi bi-house-door me-1"></i> Dashboard
                 </a>
+
                 <a asp-page="/Users/Index" class="@(Context.Request.Path.Value.Contains("Users") ? "active" : "")">
-                    <i class="bi bi-people me-1"></i> المستخدمين
+                    <i class="bi bi-people me-1"></i> Users
                 </a>
+
                 <a asp-page="/Roles/Index" class="@(Context.Request.Path.Value.Contains("Roles") ? "active" : "")">
-                    <i class="bi bi-shield-lock me-1"></i> الأدوار
+                    <i class="bi bi-shield-lock me-1"></i> Roles
                 </a>
+
                 <a asp-page="/Tenants/Index" class="@(Context.Request.Path.Value.Contains("Tenants") ? "active" : "")">
-                    <i class="bi bi-building me-1"></i> العملاء
+                    <i class="bi bi-building me-1"></i> Tenants
                 </a>
+
+
+                <a asp-page="/Account/Logout" class="text-danger">
+                    <i class="bi bi-box-arrow-right me-1"></i> LogOut
+                </a>
+                @* } *@
             </div>
 
-            <!-- Main Content -->
+
             <div class="col-md-10">
                 <div class="topbar">
                     <h4>@ViewData["Title"]</h4>
@@ -88,8 +107,6 @@
         </div>
     </div>
 
-    @RenderSection("Scripts", required: false)
-
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2025 - Application.Web - <a asp-area="" asp-page="/Privacy">Privacy</a>
@@ -97,6 +114,8 @@
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 

@@ -1,0 +1,46 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "لوحة التحكم";
+}
+
+<div class="container-fluid">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary shadow rounded">
+                <div class="card-body">
+                    <h5 class="card-title">عدد المستخدمين</h5>
+                    <p class="card-text fs-3">@Model.UserCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success shadow rounded">
+                <div class="card-body">
+                    <h5 class="card-title">عدد الأدوار</h5>
+                    <p class="card-text fs-3">@Model.RoleCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning shadow rounded">
+                <div class="card-body">
+                    <h5 class="card-title">عدد العملاء</h5>
+                    <p class="card-text fs-3">@Model.TenantCount</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <div class="alert alert-info">
+            👋 مرحبًا بك في لوحة التحكم، يمكنك إدارة النظام من خلال القوائم الجانبية.
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        console.log("Dashboard loaded");
+    </script>
+}

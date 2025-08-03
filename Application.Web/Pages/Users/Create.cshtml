@@ -1,0 +1,34 @@
+﻿@page
+@model CreateModel
+@{
+    ViewData["Title"] = "إضافة مستخدم";
+}
+
+<h3>@ViewData["Title"]</h3>
+
+<form method="post">
+    <div class="mb-3">
+        <label class="form-label">اسم المستخدم</label>
+        <input asp-for="Input.UserName" class="form-control" />
+        <span asp-validation-for="Input.UserName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">البريد الإلكتروني</label>
+        <input asp-for="Input.Email" class="form-control" />
+        <span asp-validation-for="Input.Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">كلمة المرور</label>
+        <input asp-for="Input.Password" type="password" class="form-control" />
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">حفظ</button>
+    <a asp-page="Index" class="btn btn-secondary">عودة</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

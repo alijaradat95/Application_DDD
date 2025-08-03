@@ -88,15 +88,22 @@ namespace Application.Application.Services.Users
 
         public async Task UpdateAsync(UpdateUserDto input)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == input.Id && !u.IsDeleted);
-            if (user == null)
-                throw new Exception("User not found");
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == input.Id && !u.IsDeleted);
+                if (user == null)
+                    throw new Exception("User not found");
 
-            user.UserName = input.UserName;
-            user.Email = input.Email;
-            user.LastModifiedOn = DateTime.UtcNow;
+                user.UserName = input.UserName;
+                user.Email = input.Email;
+                user.LastModifiedOn = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
 

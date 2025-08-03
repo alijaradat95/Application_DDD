@@ -1,4 +1,5 @@
 using Application.Contracts.Dtos.User;
+using Application.Contracts.Interfaces.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -6,6 +7,13 @@ namespace Application.Web.Pages.Account
 {
     public class LoginModel : PageModel
     {
+        private readonly IUserAppService _userAppService;
+
+        public LoginModel(IUserAppService userAppService)
+        {
+            _userAppService = userAppService;
+        }
+
         [BindProperty]
         public LoginDto LoginDto { get; set; } = new();
 
@@ -18,7 +26,8 @@ namespace Application.Web.Pages.Account
             if (!ModelState.IsValid)
                 return Page();
 
-            // TODO: Login Logic Here
+            _userAppService.LoginAsync(LoginDto);
+
 
             return RedirectToPage("/Index");
         }

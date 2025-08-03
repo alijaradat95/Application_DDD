@@ -1,0 +1,18 @@
+﻿@page
+@model CreateModel
+@{
+    ViewData["Title"] = "إضافة دور";
+}
+
+<h3>@ViewData["Title"]</h3>
+
+<form method="post">
+    <div class="mb-3">
+        <label class="form-label">اسم الدور</label>
+        <input asp-for="Input.Name" class="form-control" />
+        <span asp-validation-for="Input.Name" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">حفظ</button>
+    <a asp-page="Index" class="btn btn-secondary">إلغاء</a>
+</form>

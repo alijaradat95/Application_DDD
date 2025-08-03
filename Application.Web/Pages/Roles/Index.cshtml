@@ -1,0 +1,63 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "الأدوار";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>@ViewData["Title"]</h3>
+    <a class="btn btn-primary" asp-page="Create">
+        <i class="bi bi-plus-circle"></i> إضافة دور
+    </a>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-light">
+        <tr>
+            <th>#</th>
+            <th>الاسم</th>
+            <th>مسموح للمستخدمين</th>
+            <th>الإجراءات</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Roles?.Count > 0)
+        {
+            int index = 1;
+            foreach (var role in Model.Roles)
+            {
+                <tr>
+                    <td>@(index++)</td>
+                    <td>@role.Name</td>
+                    <td>
+                        @if (role.IsDefault)
+                        {
+                            <span class="badge bg-success">نعم</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">لا</span>
+                        }
+                    </td>
+                    <td>
+                        <a class="btn btn-sm btn-secondary" asp-page="Edit" asp-route-id="@role.Id">
+                            تعديل
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">لا توجد أدوار</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        console.log("Roles page loaded");
+    </script>
+}

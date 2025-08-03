@@ -1,0 +1,22 @@
+﻿@page
+@model EditModel
+@{
+    ViewData["Title"] = "تعديل مستخدم";
+}
+
+<h3>@ViewData["Title"]</h3>
+
+<form method="post">
+    <div class="mb-3">
+        <label class="form-label">اسم المستخدم</label>
+        <input asp-for="Input.UserName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">البريد الإلكتروني</label>
+        <input asp-for="Input.Email" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">تحديث</button>
+    <a asp-page="Index" class="btn btn-secondary">عودة</a>
+</form>

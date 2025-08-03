@@ -1,0 +1,54 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "العملاء";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>@ViewData["Title"]</h3>
+    <a class="btn btn-primary" asp-page="Create">
+        <i class="bi bi-plus-circle"></i> إضافة عميل
+    </a>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-light">
+        <tr>
+            <th>#</th>
+            <th>الاسم</th>
+            <th>سلسلة الاتصال</th>
+            <th>الإجراءات</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Tenants?.Count > 0)
+        {
+            int index = 1;
+            foreach (var tenant in Model.Tenants)
+            {
+                <tr>
+                    <td>@(index++)</td>
+                    <td>@tenant.Name</td>
+                    <td>@tenant.ConnectionString</td>
+                    <td>
+                        <a class="btn btn-sm btn-secondary" asp-page="Edit" asp-route-id="@tenant.Id">
+                            تعديل
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">لا توجد بيانات</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        console.log("Tenants page loaded");
+    </script>
+}
